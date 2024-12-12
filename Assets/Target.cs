@@ -1,7 +1,9 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Target : MonoBehaviour
 {
+    [SerializeField] float hitsToDestroy;
+    float hits;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -12,5 +14,11 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        hits++;
+        if (hits >= hitsToDestroy) Destroy(this.gameObject);
     }
 }
