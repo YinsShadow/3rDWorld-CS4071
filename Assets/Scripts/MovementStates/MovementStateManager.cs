@@ -5,9 +5,13 @@ using UnityEngine;
 public class MovementStateManager : MonoBehaviour
 {
     //Movement
-    public float moveSpeed = 3f;
+    public float currentMoveSpeed;
+    public float walkSpeed = 3, walkBackSpeed = 2;
+    public float runSpeed = 7, runBackSpeed = 5;
+    public float crouchSpeed = 2, crouchBackSpeed = 1;
+
     [HideInInspector] public Vector3 dir;
-    float hzInput, vInput;
+    [HideInInspector] public float hzInput, vInput;
     CharacterController controller;
     //GroundCheck
     [SerializeField] float groundYOffset;
@@ -58,7 +62,7 @@ public class MovementStateManager : MonoBehaviour
 
         dir = transform.forward * vInput + transform.right * hzInput; // Always move relative to facing direction
 
-        controller.Move(dir.normalized * moveSpeed * Time.deltaTime); // Move the player
+        controller.Move(dir.normalized * currentMoveSpeed * Time.deltaTime); // Move the player
     }
 
     bool IsGrounder() // Is the player on the gorund?
