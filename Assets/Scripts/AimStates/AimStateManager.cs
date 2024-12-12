@@ -14,18 +14,22 @@ public class AimStateManager : MonoBehaviour
     [SerializeField] Transform camFollowPos;
     // More Camera
     [HideInInspector] public Animator anim;
-    [HideInInspector] public CinemachineCamera vCam;
+    [HideInInspector] public CinemachineCamera vCam; // Not actually a vCam, just called a vCam!
     public float adsFov = 40;
     [HideInInspector] public float hipFov;
     [HideInInspector] public float currentFov;
-    public float fovSmoothSpeed;
+    public float fovSmoothSpeed = 10;
+
+    [SerializeField] Transform aimPos;
+    [SerializeField] float aimSmoothSpeed = 20;
+    [SerializeField] LayerMask aimMask;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         vCam = GetComponentInChildren<CinemachineCamera>();
         hipFov = vCam.Lens.FieldOfView;
-        anim = GetComponentInChildren<Animator>();
+        anim = GetComponent<Animator>();
         SwitchState(Hip);
     } 
 
@@ -37,6 +41,12 @@ public class AimStateManager : MonoBehaviour
         yAxis = Mathf.Clamp(yAxis, -80, 80);
 
         vCam.Lens.FieldOfView = Mathf.Lerp(vCam.Lens.FieldOfView, currentFov, fovSmoothSpeed * Time.deltaTime);// FOV change on aim state change
+
+        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
+            aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime); // Move look position
 
         currentState.UpdateState(this); // Update the animation state
     }

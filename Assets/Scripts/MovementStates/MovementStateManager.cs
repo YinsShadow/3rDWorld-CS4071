@@ -32,7 +32,7 @@ public class MovementStateManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        anim = GetComponentInChildren<Animator>();
+        anim = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         SwitchState(Idle);// Starting state set
     }
