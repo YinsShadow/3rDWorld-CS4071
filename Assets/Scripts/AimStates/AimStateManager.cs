@@ -1,24 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using Unity.Cinemachine; //Camera package chnaged for local variables (syntax error for outdated component)
+using Unity.Cinemachine; //Camera package
 public class AimStateManager : MonoBehaviour
 {
+    // Player States
     AimBaseState currentState;
     public HipFireState Hip = new HipFireState();
     public AimState Aim = new AimState();
-
+    // Camera
     [SerializeField] float mouseSense = 1;
     float xAxis, yAxis;
     [SerializeField] Transform camFollowPos;
-
+    // More Camera
     [HideInInspector] public Animator anim;
+    [HideInInspector] public CinemachineCamera vCam;
+    public float adsFov = 40;
+    [HideInInspector] public float hipFov;
+    [HideInInspector] public float currentFov;
+    public float fovSmoothSpeed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        vCam = GetComponentInChildren<CinemachineCamera>();
+        hipFov = vCam.Lens.FieldOfView;
         anim = GetComponentInChildren<Animator>();
-
         SwitchState(Hip);
     } 
 
@@ -28,6 +35,8 @@ public class AimStateManager : MonoBehaviour
         xAxis += Input.GetAxisRaw("Mouse X") * mouseSense;
         yAxis += Input.GetAxisRaw("Mouse Y") * mouseSense;
         yAxis = Mathf.Clamp(yAxis, -80, 80);
+
+        vCam.Lens.FieldOfView = Mathf.Lerp(vCam.Lens.FieldOfView, currentFov, fovSmoothSpeed * Time.deltaTime);// FOV change on aim state change
 
         currentState.UpdateState(this); // Update the animation state
     }
